@@ -75,10 +75,12 @@ generateBullshit = (addr, _) ->
 	for i in [1..10]
 		str = starts.random()
 		lastWord = str
-		while lastWord[-1..] != "."
+		j = 0
+		while lastWord[-1..] != "." and j < 50
 			nextWord = pairs[lastWord].random()
 			str += " "+nextWord
 			lastWord = nextWord
+			j++
 		strs.push str
 	strs
 
@@ -86,9 +88,10 @@ handler = (req, res, _) ->
 	ret = try
 		parsed = url.parse req.url, true
 		addr = parsed.pathname.match(rURL)[0]
-		console.log (new Date).toISOString()+" "+addr
+		console.log (new Date).toISOString()+" "+req.url
 		JSON.stringify generateBullshit addr, _
 	catch err
+		con req.url
 		con err
 		err.message
 	ret = if parsed.query.callback?
@@ -99,5 +102,12 @@ handler = (req, res, _) ->
 	res.end ret
 
 http.createServer((req, res) ->
-	handler req, res, ->
+	try
+		handler req, res, ->
+	catch err
+		con "----------------"
+		con err
+		res.end()
+		con "----------------"
+		
 ).listen "./socket/reddit-markov.sock"

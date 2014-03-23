@@ -8,9 +8,10 @@ It works by parsing all comments in a reddit post and building a probabilities t
 To run it:
 
 ```
-mkdir socket
 npm install bottleneck
-sudo npm -g install streamline
-_coffee index._coffee &> out.txt &
+node index.js &> out.txt &
 ```
 
+That will read incoming requests from ./socket/reddit-markov.sock (UNIX socket).
+
+To read from a TCP port, edit the last line. Example: "listen(80)" to read from port 80.
